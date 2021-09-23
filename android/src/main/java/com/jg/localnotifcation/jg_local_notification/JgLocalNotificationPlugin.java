@@ -72,14 +72,10 @@ import io.flutter.view.FlutterMain;
  */
 public class JgLocalNotificationPlugin implements FlutterPlugin, MethodCallHandler, PluginRegistry.NewIntentListener, ActivityAware,EventChannel.StreamHandler {
 
-
     static String NOTIFICATION_DETAILS = "notificationDetails";
-
     private MethodChannel channel;
     private Context applicationContext;
     private Activity mainActivity;
-
-
     private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD = "getNotificationAppLaunchDetails";
     private static final String SHOW_METHOD = "show";
     private static final String INVALID_ICON_ERROR_CODE = "INVALID_ICON";
@@ -103,23 +99,22 @@ public class JgLocalNotificationPlugin implements FlutterPlugin, MethodCallHandl
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         if (call.method.equals(GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD)) {
-            if (initialMessage == null) {
-                result.error("LOCAL_DATA_ERROR_0001", "Initial Message not found", null);
-            } else {
-                result.success(initialMessage);
-                System.out.println("AFCM2" + initialMessage);
-            }
+            Map<String,Object> data=new HashMap<>();
+            boolean notifDismissed =MySharedPreferences.getBoolValue(applicationContext,Constants.IS_PUSH_NOTIFICATION_DISMISSED);
+            data.put("payload",initialMessage);
+            data.put("bNotifDismissed",notifDismissed);
+            result.success(data);
+            MySharedPreferences.setBoolValue(applicationContext,Constants.IS_PUSH_NOTIFICATION_DISMISSED,false);
+            initialMessage=null;
         } else if (call.method.equals(SHOW_METHOD)) {
             if (applicationContext != null) {
                 show(call, result, applicationContext);
             } else {
                 result.error("", "", "");
             }
-
         } else {
-
+            result.notImplemented();
         }
-        result.notImplemented();
     }
 
 
@@ -145,9 +140,11 @@ public class JgLocalNotificationPlugin implements FlutterPlugin, MethodCallHandl
        {
            if(extras.containsKey("payload")){
                String value = extras.getString("payload");
-               initialMessage=value;
+               Map<String,Object> data=new HashMap<>();
+               data.put("payload",value);
+               data.put("bNotifDismissed",false);
                if(eventSink!=null){
-                   eventSink.success(value);
+                   eventSink.success(data);
                }
            }
        }
@@ -168,7 +165,6 @@ public class JgLocalNotificationPlugin implements FlutterPlugin, MethodCallHandl
         if(extras.containsKey("payload")){
           String value = extras.getString("payload");
           initialMessage=value;
-          System.out.println("AFCM1"+initialMessage);
         }
       }
 
@@ -191,7 +187,7 @@ public class JgLocalNotificationPlugin implements FlutterPlugin, MethodCallHandl
 
     private void show(MethodCall call, MethodChannel.Result result, Context context) {
         Map<String, Object> arguments = call.arguments();
-        if (arguments != null) {
+        if (arguments != null&&arguments.containsKey("id")&&arguments.containsKey("title")&&arguments.containsKey("body")&&arguments.containsKey("icon")) {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             Intent resultIntent = getLaunchIntent(context);
             NotificationCompat.Builder notificationBuilder;
@@ -235,16 +231,28 @@ public class JgLocalNotificationPlugin implements FlutterPlugin, MethodCallHandl
                     .setAutoCancel(true)
                     .setVibrate(new long[]{1000, 1000})
                     .setSound(defaultSoundUri)
+                    .setDeleteIntent(createOnDismissedIntent(context.getApplicationContext()))
                     .setContentIntent(pendingIntent);
 
-            hasInvalidIcon(result, icon);
-            notificationBuilder.setSmallIcon(getDrawableResourceId(context, icon));
-
-            notificationBuilder.setColor(Color.parseColor("#d32518"));
-
-            notificationManager.notify(id, notificationBuilder.build());
+            boolean validIcon=hasInvalidIcon(result, icon);
+            if(!validIcon){
+                notificationBuilder.setSmallIcon(getDrawableResourceId(context, icon));
+                notificationBuilder.setColor(Color.parseColor("#d32518"));
+                notificationManager.notify(id, notificationBuilder.build());
+            }
+            result.success(null);
+        }else{
             result.success(null);
         }
+    }
+
+    private PendingIntent createOnDismissedIntent(Context context) {
+        Intent intent = new Intent(context, MyNotificationDismissedReceiver.class);
+        intent.putExtra("notificationId", "");
+        PendingIntent pendingIntent =
+                PendingIntent.getBroadcast(context,
+                        0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return pendingIntent;
     }
 
     private boolean hasInvalidIcon(MethodChannel.Result result, String icon) {

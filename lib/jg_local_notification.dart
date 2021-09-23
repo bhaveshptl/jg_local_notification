@@ -14,15 +14,15 @@ class JgLocalNotification {
     await _channel.invokeMethod('show', data);
   }
 
-  Future<String?> getNotificationAppLaunchDetails() async {
-    String? result;
+  Future<Map<String, dynamic>?> getNotificationAppLaunchDetails() async {
+    Map<String, dynamic> data;
     try {
-      result = await _channel.invokeMethod("getNotificationAppLaunchDetails");
-      print(result);
+      data = (await _channel.invokeMethod("getNotificationAppLaunchDetails"))
+          .cast<String, dynamic>();
     } catch (e) {
-      print(e);
+      return null;
     }
-    return result;
+    return data;
   }
 
   Stream<dynamic>? addNotificationClickEventListener() {
