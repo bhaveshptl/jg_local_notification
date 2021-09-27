@@ -14,7 +14,11 @@ public class MyNotificationDismissedReceiver extends BroadcastReceiver {
         try{
             MySharedPreferences.setBoolValue(context,Constants.IS_PUSH_NOTIFICATION_DISMISSED,true);
             Map<String,Object> data=new HashMap<>();
-            data.put("payload",null);
+            if(intent.getExtras().containsKey("payload")){
+                data.put("payload",intent.getExtras().get("payload"));
+            }else{
+                data.put("payload",null);
+            }
             data.put("bNotifDismissed",true);
             if(JgLocalNotificationPlugin.eventSink!=null){
                 JgLocalNotificationPlugin.eventSink.success(data);

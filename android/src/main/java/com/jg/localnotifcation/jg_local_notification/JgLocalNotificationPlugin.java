@@ -231,7 +231,7 @@ public class JgLocalNotificationPlugin implements FlutterPlugin, MethodCallHandl
                     .setAutoCancel(true)
                     .setVibrate(new long[]{1000, 1000})
                     .setSound(defaultSoundUri)
-                    .setDeleteIntent(createOnDismissedIntent(context.getApplicationContext()))
+                    .setDeleteIntent(createOnDismissedIntent(context.getApplicationContext(),payload))
                     .setContentIntent(pendingIntent);
 
             boolean validIcon=hasInvalidIcon(result, icon);
@@ -246,9 +246,9 @@ public class JgLocalNotificationPlugin implements FlutterPlugin, MethodCallHandl
         }
     }
 
-    private PendingIntent createOnDismissedIntent(Context context) {
+    private PendingIntent createOnDismissedIntent(Context context,String payload) {
         Intent intent = new Intent(context, MyNotificationDismissedReceiver.class);
-        intent.putExtra("notificationId", "");
+        intent.putExtra("payload", payload);
         PendingIntent pendingIntent =
                 PendingIntent.getBroadcast(context,
                         0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
