@@ -228,6 +228,8 @@ public class JgLocalNotificationPlugin implements FlutterPlugin, MethodCallHandl
             notificationBuilder = new NotificationCompat.Builder(context, channelId)
                     .setContentTitle(title)
                     .setContentText(body)
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText(body))
                     .setAutoCancel(true)
                     .setVibrate(new long[]{1000, 1000})
                     .setSound(defaultSoundUri)
