@@ -1,5 +1,7 @@
 package com.jg.localnotifcation.jg_local_notification;
 
+import android.os.Bundle;
+
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Random;
@@ -20,6 +22,10 @@ public class NotificationDataModel   implements Serializable {
 
     NotificationDataModel(Map<String, Object> arguments){
         setNotificationData(arguments);
+    }
+
+    NotificationDataModel(Bundle arguments){
+        setNotificationDataUsingBundle(arguments);
     }
 
 
@@ -151,4 +157,45 @@ public class NotificationDataModel   implements Serializable {
             this.largeImage=(String)arguments.get("largeImage");
         }
     }
+
+    private void  setNotificationDataUsingBundle(Bundle arguments ){
+        if(arguments.containsKey("title")){
+            this.title=(String)arguments.get("title");
+        }
+        if(arguments.containsKey("body")){
+            this.body=(String)arguments.get("body");
+        }
+        if(arguments.containsKey("icon")){
+            this.icon =(String)arguments.get("icon");
+        }
+        if(arguments.containsKey("smallImage")){
+            this.smallImage=(String)arguments.get("smallImage");
+        }
+        if(arguments.containsKey("id")){
+            this.notificationId =(int) arguments.get("id");
+        }else{
+            Random randomGenerator = new Random();
+            int randomInt = randomGenerator.nextInt(999);
+            this.notificationId=randomInt;
+        }
+        if(arguments.containsKey("deepLinkURL")){
+            this.deepLinkURL=(String)arguments.get("deepLinkURL");
+        }
+        if(arguments.containsKey("channelId")){
+            this.channelId=(String)arguments.get("channelId");
+        } if(arguments.containsKey("channelName")){
+            this.channelName=(String)arguments.get("channelName");
+        } if(arguments.containsKey("soundFileName")){
+            this.soundFileName=(String)arguments.get("soundFileName");
+        } if(arguments.containsKey("payload")){
+            this.payload=(String)arguments.get("payload");
+        }
+        if(arguments.containsKey("largeImage")){
+            this.largeImage=(String)arguments.get("largeImage");
+        }
+    }
+
+
+
+
 }

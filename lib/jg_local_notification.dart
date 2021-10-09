@@ -14,6 +14,11 @@ class JgLocalNotification {
     await _channel.invokeMethod('show', data);
   }
 
+  static Future<void> scheduleNotification(
+      Map<String, dynamic> data, int delayInMillis) async {
+    await _channel.invokeMethod('scheduleNotification', [data, delayInMillis]);
+  }
+
   Future<Map<String, dynamic>?> getNotificationAppLaunchDetails() async {
     Map<String, dynamic> data;
     try {
@@ -29,7 +34,6 @@ class JgLocalNotification {
     if (clickEvent == null) {
       clickEvent = CLICKED_EVENT.receiveBroadcastStream();
     }
-
     return clickEvent;
   }
 }
