@@ -1,9 +1,10 @@
 package com.jg.localnotifcation.jg_local_notification;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Random;
 
-public class NotificationDataModel {
+public class NotificationDataModel   implements Serializable {
 
     private String title;
     private String body;
@@ -16,6 +17,11 @@ public class NotificationDataModel {
     private String channelName;
     private String soundFileName;
     private String payload;
+
+    NotificationDataModel(Map<String, Object> arguments){
+        setNotificationData(arguments);
+    }
+
 
     public String getPayload() {
         return payload;
@@ -109,40 +115,40 @@ public class NotificationDataModel {
         this.largeImage = largeImage;
     }
 
-    public void  setNotificationData(Map<String, Object> arguments ){
+    private void  setNotificationData(Map<String, Object> arguments ){
         if(arguments.containsKey("title")){
-            title=(String)arguments.get("title");
+            this.title=(String)arguments.get("title");
         }
         if(arguments.containsKey("body")){
-            body=(String)arguments.get("body");
+            this.body=(String)arguments.get("body");
         }
         if(arguments.containsKey("icon")){
-            icon =(String)arguments.get("icon");
+            this.icon =(String)arguments.get("icon");
         }
         if(arguments.containsKey("smallImage")){
-            smallImage=(String)arguments.get("smallImage");
+            this.smallImage=(String)arguments.get("smallImage");
         }
         if(arguments.containsKey("id")){
-            notificationId =(int) arguments.get("id");
+            this.notificationId =(int) arguments.get("id");
         }else{
             Random randomGenerator = new Random();
             int randomInt = randomGenerator.nextInt(999);
-            notificationId=randomInt;
+            this.notificationId=randomInt;
         }
         if(arguments.containsKey("deepLinkURL")){
-            deepLinkURL=(String)arguments.get("deepLinkURL");
+            this.deepLinkURL=(String)arguments.get("deepLinkURL");
         }
        if(arguments.containsKey("channelId")){
-            channelId=(String)arguments.get("channelId");
+            this.channelId=(String)arguments.get("channelId");
         } if(arguments.containsKey("channelName")){
-            channelName=(String)arguments.get("channelName");
+            this.channelName=(String)arguments.get("channelName");
         } if(arguments.containsKey("soundFileName")){
-            soundFileName=(String)arguments.get("soundFileName");
+            this.soundFileName=(String)arguments.get("soundFileName");
         } if(arguments.containsKey("payload")){
-            payload=(String)arguments.get("payload");
+            this.payload=(String)arguments.get("payload");
         }
         if(arguments.containsKey("largeImage")){
-            largeImage=(String)arguments.get("largeImage");
+            this.largeImage=(String)arguments.get("largeImage");
         }
     }
 }

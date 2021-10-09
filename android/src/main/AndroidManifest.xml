@@ -4,5 +4,8 @@
         <receiver
             android:name="com.jg.localnotifcation.jg_local_notification.MyNotificationDismissedReceiver"
             android:exported="false" />
+        <receiver
+            android:name="com.jg.localnotifcation.jg_local_notification.MyNotificationPublisher"
+            android:exported="false" />
     </application>
 </manifest>
