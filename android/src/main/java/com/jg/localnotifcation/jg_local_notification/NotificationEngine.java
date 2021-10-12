@@ -188,7 +188,7 @@ public class NotificationEngine {
                 notificationIntent.putExtra("channelName", dataModel.getChannelName());
                 notificationIntent.putExtra("soundFileName", dataModel.getSoundFileName());
                 notificationIntent.putExtra("payload", dataModel.getPayload());
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 459, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, dataModel.getNotificationId(), notificationIntent, PendingIntent.FLAG_ONE_SHOT);
                 long futureInMillis = SystemClock.elapsedRealtime() + delay;
                 AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                 assert alarmManager != null;
